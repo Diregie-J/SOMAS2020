@@ -19,7 +19,15 @@ func (c *client) MakeForageInfo() shared.ForageShareInfo {
 	return c.BaseClient.MakeForageInfo()
 }
 
-// ------ TODO: OPTIONAL ------
 func (c *client) ReceiveForageInfo(forageInfo []shared.ForageShareInfo) {
-	c.BaseClient.ReceiveForageInfo(forageInfo)
+	for _, val := range forageInfo {
+		c.forageHistory[val.DecisionMade.Type] =
+			append(
+				c.forageHistory[val.DecisionMade.Type],
+				ForageResults{
+					forageIn:     val.DecisionMade.Contribution,
+					forageReturn: val.ResourceObtained,
+				},
+			)
+	}
 }
