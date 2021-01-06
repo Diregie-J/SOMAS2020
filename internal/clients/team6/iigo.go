@@ -26,14 +26,14 @@ func (c *client) ReceiveCommunication(sender shared.ClientID, data map[shared.Co
 	}
 }
 
-// ------ TODO: COMPULSORY -----
 func (c *client) MonitorIIGORole(roleName shared.Role) bool {
-	return c.BaseClient.MonitorIIGORole(roleName)
+	return false
 }
 
-// ------ TODO: COMPULSORY -----
 func (c *client) DecideIIGOMonitoringAnnouncement(monitoringResult bool) (resultToShare bool, announce bool) {
-	return c.BaseClient.DecideIIGOMonitoringAnnouncement(monitoringResult)
+	resultToShare = monitoringResult
+	announce = true
+	return
 }
 
 func (c *client) CommonPoolResourceRequest() shared.Resources {
@@ -45,9 +45,22 @@ func (c *client) CommonPoolResourceRequest() shared.Resources {
 	return minThreshold - ownResources
 }
 
-// ------ TODO: COMPULSORY -----
+func (c *client) RequestAllocation() shared.Resources {
+	//we will take 10% of the common pool when we are critical or dying
+	ourStatus := c.ServerReadHandle.GetGameState().ClientInfo.LifeStatus
+	if ourStatus == shared.Critical || ourStatus == shared.Dead {
+		return c.ServerReadHandle.GetGameState().CommonPool / 10
+	}
+	return 0
+}
+
+//Optional
 func (c *client) ResourceReport() shared.ResourcesReport {
-	return c.BaseClient.ResourceReport()
+	ourResources := c.ServerReadHandle.GetGameState().ClientInfo.Resources
+	return shared.ResourcesReport{
+		ReportedAmount: ourResources,
+		Reported:       true,
+	}
 }
 
 // ------ TODO: COMPULSORY -----
@@ -66,8 +79,4 @@ func (c *client) GetTaxContribution() shared.Resources {
 // ------ TODO: COMPULSORY -----
 func (c *client) GetSanctionPayment() shared.Resources {
 	return c.BaseClient.GetSanctionPayment()
-}
-
-func (c *client) RequestAllocation() shared.Resources {
-	return c.BaseClient.RequestAllocation()
 }
