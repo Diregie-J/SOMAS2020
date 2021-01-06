@@ -68,7 +68,7 @@ func (c *client) ResourceReport() shared.ResourcesReport {
 // 	return c.BaseClient.RuleProposal()
 // }
 
-func (c *client) GetTaxContribution() Resources {
+func (c *client) GetTaxContribution() shared.Resources {
 	ourPersonality := c.getPersonality()
 	if ourPersonality == Selfish { //evade tax when we are selfish
 		return 0
