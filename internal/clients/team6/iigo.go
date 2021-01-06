@@ -17,9 +17,13 @@ func (c *client) GetClientSpeakerPointer() roles.Speaker {
 	return &speaker{client: c}
 }
 
-// ------ TODO: COMPULSORY ------
 func (c *client) ReceiveCommunication(sender shared.ClientID, data map[shared.CommunicationFieldName]shared.CommunicationContent) {
-	c.BaseClient.ReceiveCommunication(sender, data)
+	for fieldName, content := range data {
+		switch fieldName {
+		case shared.TaxAmount:
+			c.config.payingTax = shared.Resources(content.IntegerData)
+		} //add sth else
+	}
 }
 
 // ------ TODO: COMPULSORY -----
@@ -32,9 +36,13 @@ func (c *client) DecideIIGOMonitoringAnnouncement(monitoringResult bool) (result
 	return c.BaseClient.DecideIIGOMonitoringAnnouncement(monitoringResult)
 }
 
-// ------ TODO: COMPULSORY -----
 func (c *client) CommonPoolResourceRequest() shared.Resources {
-	return c.BaseClient.CommonPoolResourceRequest()
+	minThreshold := c.ServerReadHandle.GetGameConfig().MinimumResourceThreshold
+	ownResources := c.ServerReadHandle.GetGameState().ClientInfo.Resources
+	if ownResources > minThreshold { //if current resource > threshold, our agent skip to request resource from common pool
+		return 0
+	}
+	return minThreshold - ownResources
 }
 
 // ------ TODO: COMPULSORY -----
@@ -47,9 +55,12 @@ func (c *client) RuleProposal() string {
 	return c.BaseClient.RuleProposal()
 }
 
-// ------ TODO: COMPULSORY -----
 func (c *client) GetTaxContribution() shared.Resources {
-	return c.BaseClient.GetTaxContribution()
+	ourPersonality := c.getPersonality()
+	if ourPersonality == Selfish { //evade tax when we are selfish
+		return 0
+	}
+	return c.config.payingTax
 }
 
 // ------ TODO: COMPULSORY -----
