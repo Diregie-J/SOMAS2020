@@ -14,9 +14,38 @@ func (c *client) ReceiveDisasterPredictions(receivedPredictions shared.ReceivedD
 	c.BaseClient.ReceiveDisasterPredictions(receivedPredictions)
 }
 
-// ------ TODO: OPTIONAL ------
+// OPTIONAL
 func (c *client) MakeForageInfo() shared.ForageShareInfo {
-	return c.BaseClient.MakeForageInfo()
+	var shareTo []shared.ClientID // containing agents our agent wish to share informationwith
+
+	for id, status := range c.ServerReadHandle.GetGameState().ClientLifeStatuses {
+		if status != shared.Dead {
+			shareTo = append(shareTo, id)
+		}
+	}
+
+	var lastDecision shared.ForageDecision
+	var lastForageOut shared.Resources
+
+	for forageType, results := range c.forageHistory {
+		for _, result := range results {
+			if uint(result.turn) == c.ServerReadHandle.GetGameState().Turn-1 {
+				lastForageOut = result.forageReturn
+				lastDecision = shared.ForageDecision{
+					Type:         forageType,
+					Contribution: result.forageIn,
+				}
+			}
+		}
+	}
+
+	forageInfo := shared.ForageShareInfo{
+		DecisionMade:     lastDecision,
+		ResourceObtained: lastForageOut,
+		ShareTo:          shareTo,
+	}
+
+	return forageInfo
 }
 
 func (c *client) ReceiveForageInfo(forageInfo []shared.ForageShareInfo) {
@@ -27,6 +56,7 @@ func (c *client) ReceiveForageInfo(forageInfo []shared.ForageShareInfo) {
 				ForageResults{
 					forageIn:     val.DecisionMade.Contribution,
 					forageReturn: val.ResourceObtained,
+					turn:         c.ServerReadHandle.GetGameState().Turn,
 				},
 			)
 	}
