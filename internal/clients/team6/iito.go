@@ -105,7 +105,7 @@ func (c *client) GetGiftOffers(receivedRequests shared.GiftRequestDict) shared.G
 				// introduces normal penalty
 				offers[team] = friendshipCoffesOnOffer[team] * amountOffer
 			} else if ourPersonality == Generous {
-				// intorduces no penalty - we are rich!
+				// introduces no penalty - we are rich!
 				offers[team] = amountOffer
 			}
 		}
