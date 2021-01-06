@@ -64,11 +64,11 @@ func (c *client) ResourceReport() shared.ResourcesReport {
 }
 
 // ------ TODO: COMPULSORY -----
-func (c *client) RuleProposal() string {
-	return c.BaseClient.RuleProposal()
-}
+// func (c *client) RuleProposal() string {
+// 	return c.BaseClient.RuleProposal()
+// }
 
-func (c *client) GetTaxContribution() shared.Resources {
+func (c *client) GetTaxContribution().Resources {
 	ourPersonality := c.getPersonality()
 	if ourPersonality == Selfish { //evade tax when we are selfish
 		return 0
