@@ -37,6 +37,7 @@ const (
 type ForageResults struct {
 	forageIn     shared.Resources
 	forageReturn shared.Resources
+	turn         uint
 }
 
 // Config configures our island's initial state
@@ -47,6 +48,7 @@ type Config struct {
 	selfishThreshold       shared.Resources
 	normalThreshold        shared.Resources
 	payingTax              shared.Resources
+	multiplier             float64
 }
 
 var (
@@ -69,5 +71,6 @@ var (
 		selfishThreshold:       50.0,
 		normalThreshold:        150.0,
 		payingTax:              15.0,
+		multiplier:             0.2,
 	}
 )
