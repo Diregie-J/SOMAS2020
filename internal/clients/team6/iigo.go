@@ -77,6 +77,6 @@ func (c *client) GetTaxContribution() shared.Resources {
 }
 
 // ------ TODO: COMPULSORY -----
-func (c *client) GetSanctionPayment() shared.Resources {
-	return c.BaseClient.GetSanctionPayment()
-}
+// func (c *client) GetSanctionPayment() shared.Resources {
+// 	return c.BaseClient.GetSanctionPayment()
+// }
