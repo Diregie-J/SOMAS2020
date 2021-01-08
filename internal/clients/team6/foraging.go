@@ -31,8 +31,6 @@ func (c *client) changeForageType() shared.ForageType {
 	var deerParticipant2 uint = 0
 	var fishParticipant2 uint = 0
 
-	var returnType shared.ForageType
-
 	var deerAverageRoi, deerAverageRoi2, fishAverageRoi, fishAverageRoi2 float64
 	for _, deerResults := range c.forageHistory[shared.DeerForageType] {
 		if deerResults.turn == c.ServerReadHandle.GetGameState().Turn-1 {
@@ -62,54 +60,24 @@ func (c *client) changeForageType() shared.ForageType {
 	fishAverageRoi2 = fishRoiTotal2 / float64(fishParticipant2)
 
 	if fishAverageRoi < deerAverageRoi {
-		returnType = shared.DeerForageType
 		if deerAverageRoi < deerAverageRoi2 {
-			c.clientConfig.multiplier -= 0.08
+			c.clientConfig.multiplier -= 0.03
 		}
 		if deerAverageRoi > deerAverageRoi2 {
-			c.clientConfig.multiplier += 0.08
+			c.clientConfig.multiplier += 0.03
 		}
+		return shared.DeerForageType
 	}
-	returnType = shared.FishForageType
+
 	if fishAverageRoi < fishAverageRoi2 {
-		c.clientConfig.multiplier -= 0.1
+		c.clientConfig.multiplier -= 0.05
 	}
 	if fishAverageRoi > fishAverageRoi2 {
-		c.clientConfig.multiplier += 0.1
+		c.clientConfig.multiplier += 0.05
 	}
-
-	return returnType
+	return shared.DeerForageType
 }
 
-// for _, results := range forageHistory {
-// 	var lastRoi float64 = 0
-// 	var lastlastRoi float64 = 0
-// 	for _, result := range results {
-// 		if result.turn == c.ServerReadHandle.GetGameState().Turn-2 {
-// 			lastlastRoi = result.calcROI()
-// 		}
-// 		if result.turn == c.ServerReadHandle.GetGameState().Turn-1 {
-// 			lastRoi = result.calcROI()
-// 		}
-// 		if lastRoi != 0 && lastlastRoi != 0 {
-// 			//it means last round and the round before last round are using the same forage type
-// 			if lastlastRoi < lastRoi {
-// 				c.clientConfig.multiplier += 0.1
-// 			} else {
-// 				c.clientConfig.multiplier += 0.1
-// 			}
-// 		}
-// 	}
-// }
-// return c.clientConfig.multiplier
-//}
-// func (c *client) changeForageType() shared.ForageType {
-// 	//fishing is a safer choice if we contributed a lot
-// 	if c.clientConfig.multiplier > 0.5 {
-// 		return shared.FishForageType
-// 	}
-// 	return shared.DeerForageType
-// }
 
 func (c *client) decideContribution() shared.Resources {
 
