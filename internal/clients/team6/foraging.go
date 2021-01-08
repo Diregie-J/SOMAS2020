@@ -34,7 +34,7 @@ func (c *client) changeForageType() shared.ForageType {
 	var returnType shared.ForageType
 
 	var deerAverageRoi, deerAverageRoi2, fishAverageRoi, fishAverageRoi2 float64
-	for _, deerResults := range forageHistory[shared.DeerForageType] {
+	for _, deerResults := range c.forageHistory[shared.DeerForageType] {
 		if deerResults.turn == c.ServerReadHandle.GetGameState().Turn-1 {
 			deerRoiTotal += deerResults.calcROI()
 			deerParticipant++
@@ -47,7 +47,7 @@ func (c *client) changeForageType() shared.ForageType {
 	deerAverageRoi = deerRoiTotal / float64(deerParticipant)
 	deerAverageRoi2 = deerRoiTotal2 / float64(deerParticipant2)
 
-	for _, fishResults := range forageHistory[shared.FishForageType] {
+	for _, fishResults := range c.forageHistory[shared.FishForageType] {
 		if fishResults.turn == c.ServerReadHandle.GetGameState().Turn-1 {
 			fishRoiTotal += fishResults.calcROI()
 			fishParticipant++
