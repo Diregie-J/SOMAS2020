@@ -92,7 +92,7 @@ func (c *client) ResourceReport() shared.ResourcesReport {
 		Reported:       true,
 	}
 
-	if ourPersonality == Generous {
+	if ourPersonality == Selfish {
 		return fakeReport
 	}
 

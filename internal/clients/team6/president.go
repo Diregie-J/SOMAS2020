@@ -13,13 +13,7 @@ type president struct {
 func (p *president) EvaluateAllocationRequests(resourceRequest map[shared.ClientID]shared.Resources, availCommonPool shared.Resources) shared.PresidentReturnContent {
 	resourceAllocation := make(map[shared.ClientID]shared.Resources)
 	ourPersonality := p.client.getPersonality()
-	evaluationCoeff := shared.Resources(0.5)
-
-	friendCoeffsOnAllocation := make(map[shared.ClientID]shared.Resources)
-
-	for team, fsc := range p.client.getFriendshipCoeffs() {
-		friendCoeffsOnAllocation[team] = shared.Resources(fsc)
-	}
+	evaluationCoeff := shared.Resources(0.75)
 
 	if ourPersonality != Selfish {
 		requestSum := shared.Resources(0.0)
@@ -29,12 +23,10 @@ func (p *president) EvaluateAllocationRequests(resourceRequest map[shared.Client
 		}
 
 		if requestSum <= evaluationCoeff*availCommonPool || requestSum == 0 {
-			for team, request := range resourceRequest {
-				resourceAllocation[team] = friendCoeffsOnAllocation[team] * request
-			}
+			resourceAllocation = resourceRequest
 		} else {
-			for team, request := range resourceRequest {
-				resourceAllocation[team] = friendCoeffsOnAllocation[team] * evaluationCoeff * availCommonPool * request / requestSum
+			for id, request := range resourceRequest {
+				resourceAllocation[id] = evaluationCoeff * availCommonPool * request / requestSum
 			}
 		}
 	} else {
@@ -59,20 +51,20 @@ func (p *president) EvaluateAllocationRequests(resourceRequest map[shared.Client
 		}
 
 		if otherRequestSum <= evaluationCoeff*commonPoolLeft || otherRequestSum == 0 {
-			for team, request := range resourceRequest {
-				if team == p.client.GetID() {
+			for id, request := range resourceRequest {
+				if id == p.client.GetID() {
 					continue
 				}
 
 				resourceAllocation[id] = request
 			}
 		} else {
-			for team, request := range resourceRequest {
-				if team == p.client.GetID() {
+			for id, request := range resourceRequest {
+				if id == p.client.GetID() {
 					continue
 				}
 
-				resourceAllocation[team] = friendCoeffsOnAllocation[team] * evaluationCoeff * commonPoolLeft * request / otherRequestSum
+				resourceAllocation[id] = evaluationCoeff * commonPoolLeft * request / otherRequestSum
 			}
 		}
 	}
